@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Clinical AI Assistant</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Include marked.js for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <!-- Include html2canvas for screenshots -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left sidebar for history -->
+        <aside class="sidebar" id="historySidebar">
+            <div class="sidebar-header">
+                <span>Conversations</span>
+                <button id="toggleSidebarBtn" class="btn btn-secondary">Hide</button>
+            </div>
+            <div class="sidebar-content" id="threadsList"></div>
+        </aside>
+
+        <!-- Top navigation bar -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">🧬 Athena Data Insight Agent </h1>
+                <div class="header-actions">
+                    <button id="openSidebarBtn" class="btn btn-secondary">History</button>
+                    <div class="model-switcher">
+                        <button id="modelDropdownBtn" class="btn btn-secondary">模型：默认 ▾</button>
+                        <div id="modelDropdown" class="dropdown-menu" style="display:none"></div>
+                    </div>
+                    <button id="startNewChatBtn" class="btn btn-secondary">Start New Chat</button>
+                    <button id="shareChatBtn" class="btn btn-secondary">Share Chat</button>
+
+                    <div class="status-indicator">
+                        <span id="connectionStatus" class="status-dot offline"></span>
+                        <span id="connectionText">Offline</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main chat area -->
+        <main class="chat-container">
+            <!-- Chat messages area -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">🧪</div>
+                    <h2>Welcome to Athena Data Insight Agent</h2>
+                    <p>I am the Data Insight Agent, developed by ClinReviewPlatform as an addon for clinical trial TFL review. Deployed privately in your secure environment, I avoid any risk of data leakage. Reviewers can pick models (e.g., LLaMA or DeepSeek) and query trial databases in natural language — seeing data instantly without programmer support. My goal is to make the review process faster, more accurate, and more professional.</p>
+                    <p>Enter your medical question or data query to begin.</p>
+                </div>
+            </div>
+
+            <!-- Input area -->
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Ask a medical question or data query..." 
+                        rows="1"
+                        maxlength="2000"
+                    ></textarea>
+                    <div id="attachmentChips" class="attach-chips"></div>
+                    <button id="uploadBtn" class="send-btn" title="Attach file">
+                        <span>📎</span>
+                    </button>
+                    <input id="fileInput" type="file" style="display:none" multiple>
+                    <button id="sendBtn" class="send-btn" disabled>
+                        <span class="send-icon">📤</span>
+                    </button>
+                </div>
+                <div class="input-hint">
+                    Press Enter to send, Shift + Enter for new line | <span id="charCount">0</span>/2000
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/ws.js"></script>
+    <script src="js/chat/thinking-flow.js"></script>
+    <script src="js/chat/message-actions.js"></script>
+    <script src="js/chat/history.js"></script>
+    <script src="js/chat/share-module.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>
