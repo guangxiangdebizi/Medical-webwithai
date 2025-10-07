@@ -17,7 +17,8 @@ class MessageProcessor:
         self.history_images_max_per_record = history_images_max_per_record
 
     def build_shared_history(self, history: List[Dict[str, Any]], 
-                           user_input, force_text_only: bool = False) -> List[Dict[str, Any]]:
+                           user_input, force_text_only: bool = False,
+                           conversation_files: Optional[List[Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
         """构建共享消息历史"""
         shared_history: List[Dict[str, Any]] = []
         injected_images_total = 0
@@ -103,6 +104,16 @@ class MessageProcessor:
                 if record.get('ai_response'):
                     shared_history.append({"role": "assistant", "content": record['ai_response']})
         
+        if conversation_files:
+            lines = ["[Conversation files]"]
+            for idx, item in enumerate(conversation_files, 1):
+                url = str(item.get('url') or '').strip()
+                filename = str(item.get('filename') or '').strip()
+                display = filename or f"file_{idx}"
+                lines.append(f"- {display}: {url}")
+            lines.append("Use tool 'preview_uploaded_file' with the url to inspect contents if needed.")
+            shared_history.append({"role": "assistant", "content": "\n".join(lines)})
+
         # 允许 user_input 为多模态列表（OpenAI风格 content parts）
         if isinstance(user_input, list):
             shared_history.append({"role": "user", "content": user_input})

@@ -239,6 +239,15 @@ async def websocket_chat(websocket: WebSocket):
                         limit=10,
                         conversation_id=conversation_id
                     ) # 限制最近10条
+                    conversation_files = []
+                    try:
+                        if conversation_id is not None:
+                            conversation_files = await chat_db.get_conversation_files(
+                                session_id=effective_session_id_for_history,
+                                conversation_id=conversation_id
+                            )
+                    except Exception as _e:
+                        print(f"⚠️ 获取会话文件失败: {_e}")
 
                     # 启动后台任务消费流，允许外部 pause 取消
                     async def stream_and_persist():
@@ -281,7 +290,12 @@ async def websocket_chat(websocket: WebSocket):
                                         pass
                                 user_payload = enriched_user_input
 
-                            async for response_chunk in mcp_agent.chat_stream(user_payload, history=history, session_id=current_session_id):
+                            async for response_chunk in mcp_agent.chat_stream(
+                                user_payload,
+                                history=history,
+                                session_id=current_session_id,
+                                conversation_files=conversation_files
+                            ):
                                 await manager.send_personal_message(response_chunk, websocket)
                                 chunk_type = response_chunk.get("type")
                                 if chunk_type == "ai_response_start":
@@ -460,10 +474,23 @@ async def websocket_chat(websocket: WebSocket):
                             limit=10,
                             conversation_id=int(target_conv)
                         )
+                        conversation_files = []
+                        try:
+                            conversation_files = await chat_db.get_conversation_files(
+                                session_id=target_session,
+                                conversation_id=int(target_conv)
+                            )
+                        except Exception as _e:
+                            print(f"⚠️ 获取会话文件失败: {_e}")
                         async def stream_and_persist_edit():
                             try:
                                 response_started = False
-                                async for response_chunk in mcp_agent.chat_stream(user_input, history=history, session_id=current_session_id):
+                                async for response_chunk in mcp_agent.chat_stream(
+                                    user_input,
+                                    history=history,
+                                    session_id=current_session_id,
+                                    conversation_files=conversation_files
+                                ):
                                     await manager.send_personal_message(response_chunk, websocket)
                                     chunk_type = response_chunk.get("type")
                                     if chunk_type == "ai_response_start":
@@ -652,6 +679,15 @@ async def get_history(limit: int = 50, session_id: str = "default", conversation
             limit=limit,
             conversation_id=conversation_id
         )
+        conversation_files = []
+        if conversation_id is not None:
+            try:
+                conversation_files = await chat_db.get_conversation_files(
+                    session_id=session_id,
+                    conversation_id=conversation_id
+                )
+            except Exception as _e:
+                print(f"⚠️ 获取会话文件失败: {_e}")
         
         # 获取统计信息
         stats = await chat_db.get_stats()
@@ -662,7 +698,8 @@ async def get_history(limit: int = 50, session_id: str = "default", conversation
             "total": stats.get("total_records", 0),
             "returned": len(records),
             "session_id": session_id,
-            "conversation_id": conversation_id
+            "conversation_id": conversation_id,
+            "conversation_files": conversation_files
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取历史记录失败: {str(e)}")

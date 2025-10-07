@@ -289,7 +289,9 @@ class WebMCPAgent:
 
     # 已移至 get_mcp_tools.py
 
-    async def chat_stream(self, user_input, history: List[Dict[str, Any]] = None, session_id: Optional[str] = None) -> AsyncGenerator[Dict[str, Any], None]:
+    async def chat_stream(self, user_input, history: List[Dict[str, Any]] = None,
+                          session_id: Optional[str] = None,
+                          conversation_files: Optional[List[Dict[str, Any]]] = None) -> AsyncGenerator[Dict[str, Any], None]:
         """流式探测 + 立即中断：
         - 先直接 astream 开流，短暂缓冲并检测 function_call/tool_call；
         - 若检测到工具调用：立即中断本次流式（不下发缓冲），执行工具（非流式），写回 messages 后进入下一轮；
@@ -326,7 +328,12 @@ class WebMCPAgent:
             current_model_key = self._get_current_model_key(session_id)
             force_text_only = current_model_key in self._non_multimodal_models
             
-            shared_history = self.message_processor.build_shared_history(history, user_input, force_text_only)
+            shared_history = self.message_processor.build_shared_history(
+                history,
+                user_input,
+                force_text_only,
+                conversation_files=conversation_files
+            )
 
             max_rounds = 25
             round_index = 0
