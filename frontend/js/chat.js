@@ -28,6 +28,8 @@ class ChatApp {
         this.fileInput = document.getElementById('fileInput');
         this.attachmentChips = document.getElementById('attachmentChips');
         this.pendingAttachments = [];
+        this.mermaidInitialized = false;
+        this.mermaidIdCounter = 0;
         
         this.init();
     }
@@ -932,6 +934,10 @@ class ChatApp {
             // 更新内容并添加光标
             this.currentAIMessage.innerHTML = renderedContent + 
                 (!isFinal ? '<span class="ai-cursor">▋</span>' : '');
+            
+            if (isFinal) {
+                this.renderMermaidDiagrams(this.currentAIMessage);
+            }
                 
         } catch (error) {
             console.warn('Markdown渲染错误:', error);
@@ -939,6 +945,68 @@ class ChatApp {
             this.currentAIMessage.innerHTML = this.escapeHtml(this.currentAIContent) + 
                 (!isFinal ? '<span class="ai-cursor">▋</span>' : '');
         }
+    }
+
+    renderMermaidDiagrams(container) {
+        if (!container || typeof window.mermaid === 'undefined' || !window.mermaid) {
+            return;
+        }
+
+        try {
+            if (!this.mermaidInitialized) {
+                window.mermaid.initialize({ startOnLoad: false });
+                this.mermaidInitialized = true;
+            }
+        } catch (e) {
+            console.warn('Mermaid 初始化失败', e);
+            return;
+        }
+
+        const selector = 'pre code.language-mermaid, pre code.lang-mermaid';
+        const codeBlocks = container.querySelectorAll(selector);
+        if (!codeBlocks.length) {
+            return;
+        }
+
+        codeBlocks.forEach((codeBlock) => {
+            if (!codeBlock || codeBlock.dataset.mermaidProcessed === 'true') {
+                return;
+            }
+            const pre = codeBlock.closest('pre');
+            if (!pre) {
+                return;
+            }
+
+            const definition = codeBlock.textContent || '';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mermaid';
+            wrapper.dataset.mermaidProcessed = 'true';
+            wrapper.textContent = definition;
+
+            try {
+                pre.replaceWith(wrapper);
+            } catch (e) {
+                console.warn('Mermaid 容器替换失败', e);
+                return;
+            }
+
+            const graphId = `mermaid-${Date.now()}-${this.mermaidIdCounter++}`;
+            window.mermaid
+                .render(graphId, definition)
+                .then(({ svg, bindFunctions }) => {
+                    wrapper.innerHTML = svg;
+                    if (typeof bindFunctions === 'function') {
+                        bindFunctions(wrapper);
+                    }
+                })
+                .catch((err) => {
+                    console.warn('Mermaid 渲染失败', err);
+                    wrapper.classList.add('mermaid-error');
+                    wrapper.innerHTML = `<pre>${this.escapeHtml(definition)}</pre>`;
+                });
+
+            codeBlock.dataset.mermaidProcessed = 'true';
+        });
     }
     
     // 渲染部分markdown内容（处理不完整的语法）
