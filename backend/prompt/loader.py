@@ -53,7 +53,7 @@ def load_prompts(profile_id: str | None) -> Dict[str, str]:
         # 最小兜底
         return {
             "tools_system_prompt_template": (
-                "Today is {current_date} ({current_weekday}). You are Athena Data Insight Agent.\n"
+                "Today is {current_date} ({current_weekday}). You are Dolphin Data Insight Agent.\n"
                 "Default to no tool calls. Only call tools when necessary."
             ),
             "stream_system_prompt_template": "",
