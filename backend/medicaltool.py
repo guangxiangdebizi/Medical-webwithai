@@ -1,5 +1,7 @@
 import re
+import json
 from typing import Any, Dict, List
+from pathlib import Path
 
 import pymysql
 from langchain_core.tools import StructuredTool
@@ -237,7 +239,28 @@ def create_medical_tools(
 
     def show_tables_tool_impl() -> Dict[str, Any]:
         tables_with_scope = _list_tables_with_current_msid()
-        return {"ok": True, "tables": tables_with_scope}
+        
+        # 加载表描述
+        descriptions_path = Path(__file__).parent / "table_descriptions.json"
+        table_descriptions = {}
+        if descriptions_path.exists():
+            try:
+                with open(descriptions_path, 'r', encoding='utf-8') as f:
+                    table_descriptions = json.load(f)
+            except Exception:
+                # 如果加载失败，使用空字典
+                table_descriptions = {}
+        
+        # 构建带描述的表列表
+        tables_with_descriptions = [
+            {
+                "name": table,
+                "description": table_descriptions.get(table, "No description available")
+            }
+            for table in tables_with_scope
+        ]
+        
+        return {"ok": True, "tables": tables_with_descriptions}
 
     class DescribeTableArgs(BaseModel):
         table_name: str = Field(description="Table name to examine")
@@ -603,7 +626,7 @@ def create_medical_tools(
     showtables_tool = StructuredTool.from_function(
         func=show_tables_tool_impl,
         name="showtables",
-        description="Returns list of table names that contain data for the current user's access scope (msid).",
+        description="Returns list of available tables with descriptions for the current user's access scope . Each table entry includes the table name and a description of its contents and purpose.",
     )
 
     descripttables_tool = StructuredTool.from_function(

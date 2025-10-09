@@ -1,0 +1,23 @@
+{
+  "patient_adae": "Analysis dataset for adverse events, containing comprehensive AE information including event terms (verbatim and coded), severity grades, causality assessment, serious event criteria, outcomes, treatment-emergent flags, and patient demographics and treatment context",
+  "patient_adsl": "Subject-level analysis dataset (baseline and demographics), including age, gender, race, ethnicity, treatment assignments, study dates, completion status, discontinuation reasons, baseline BMI and weight, ECOG performance status, MMSE scores, disease duration, and stratification factors",
+  "patient_adtte": "Time-to-event analysis dataset for survival and event occurrence analysis, containing censoring information, event descriptions, analysis values, treatment groups, and patient baseline characteristics",
+  "patient_ae": "Adverse events raw data capturing all safety events during the study, including event terms (MedDRA coded), severity, seriousness criteria, relationship to study treatment, actions taken, outcomes, and event onset/resolution dates",
+  "patient_cm": "Concomitant medications table recording prior and concurrent medications used during the study, including medication names (verbatim and coded), indications, medication class, dosing information, route, frequency, and start/end dates",
+  "patient_dm": "Demographics domain containing patient baseline characteristics including age, sex, race, ethnicity, country, study site, treatment arms (planned and actual), reference dates (study start/end, first/last exposure), and death information",
+  "patient_ds": "Disposition domain tracking subject status changes and milestones throughout the study, including study completion, early termination, protocol deviations, and other disposition events with associated dates",
+  "patient_ex": "Exposure domain documenting study drug administration records, including treatment name, dose amount and units, dosing frequency, dose form, route of administration, visit information, and start/end dates of each exposure period",
+  "patient_lab": "Laboratory analysis dataset summarizing lab parameters across visits, including parameter names, analysis values, baseline values, changes from baseline, baseline flags, and treatment group assignments",
+  "patient_lbhe": "Hematology laboratory test results including test codes, test names, original and standardized results with units, normal range references, abnormality indicators, baseline flags, and collection dates",
+  "patient_lbur": "Urinalysis laboratory test results including test codes, test names, original and standardized results with units, normal range references, abnormality indicators, baseline flags, and collection dates",
+  "patient_mh": "Medical history domain capturing prior and concurrent medical conditions, including condition terms (verbatim and MedDRA coded), body system classifications, severity, and onset dates",
+  "patient_sc": "Subject characteristics domain containing baseline assessments and special measurements such as disease-specific scores, performance status, or other eligibility criteria evaluated at study entry",
+  "patient_se": "Study elements domain defining the timeline and structure of study periods for each subject, including element codes, descriptions, epochs, and start/end dates of each study element",
+  "patient_sv": "Subject visits domain recording actual visit dates and schedules for each patient, including visit numbers, visit names, visit days relative to reference dates, epochs, and visit descriptions",
+  "patient_ta": "Trial arms domain defining the planned sequence of study elements for each treatment arm, including arm codes, element transitions, epochs, and branch logic in the study design",
+  "patient_te": "Trial elements domain defining the protocol-specified study elements including element codes, descriptions, rules for starting and ending elements, and element duration specifications",
+  "patient_ti": "Trial inclusion/exclusion criteria domain listing all protocol-specified eligibility criteria with test codes, descriptions, and categories (inclusion vs exclusion)",
+  "patient_tv": "Trial visits domain defining the protocol-specified visit schedule including visit numbers, names, planned visit days, treatment arms, and rules for visit windows (start/end relative timing)",
+  "patient_vs": "Vital signs measurements including test codes (blood pressure, heart rate, temperature, etc.), results with units, position and location of measurement, baseline flags, visit information, and measurement timing details"
+}
+

@@ -14,7 +14,7 @@ TOOLS_SYSTEM_PROMPT_TEMPLATE = (
     "Prefer direct answers for pure reasoning/summarization; do not call tools.\n"
     "Avoid excessive tool usage unless explicitly requested by the user.\n"
     "Tool choices:\n"
-    "  - list tables → 'showtables'\n"
+    "  - list tables with descriptions → 'showtables' (returns table names and purpose descriptions)\n"
     "  - describe schema/sample → 'descripttables'\n"
     "  - run SQL → 'medical_query'\n"
     "  - preview user-uploaded file (CSV/TSV/XLSX under /uploads) → 'preview_uploaded_file' with parameter 'url'.\n"
