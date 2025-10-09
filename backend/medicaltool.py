@@ -5,6 +5,8 @@ import pymysql
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field
 from datetime import datetime, timedelta, date
+from sqlglot import exp, parse_one
+from sqlglot.errors import ParseError
 
 
 def create_medical_tools(
@@ -94,9 +96,6 @@ def create_medical_tools(
         sql_stripped = str(sql or "").strip()
         sql_norm = re.sub(r"\s+", " ", sql_stripped).lower()
 
-        placeholder_pos = sql_stripped.find("/*SCOPE_AND*/")
-        has_placeholder = placeholder_pos != -1
-
         if sql_norm.startswith("show tables"):
             tables_with_scope = _list_tables_with_current_msid()
             return {"ok": True, "tables": tables_with_scope}
@@ -108,70 +107,22 @@ def create_medical_tools(
         ):
             raise ValueError("Only SELECT and SHOW COLUMNS/DESCRIBE statements are allowed")
 
-        table_refs: List = []
-        RESERVED_NEXT = {
-            "WHERE",
-            "GROUP",
-            "BY",
-            "ORDER",
-            "LIMIT",
-            "JOIN",
-            "INNER",
-            "LEFT",
-            "RIGHT",
-            "FULL",
-            "CROSS",
-            "ON",
-            "USING",
-            "HAVING",
-            "UNION",
-            "EXCEPT",
-            "INTERSECT",
-            "WINDOW",
-            "QUALIFY",
-        }
-
-        def _normalize_alias(alias_token: str) -> str:
-            if not alias_token:
-                return ""
-            token = alias_token.strip('`').strip()
-            if not token:
-                return ""
-            if token.upper() in RESERVED_NEXT:
-                return ""
-            return token
-
-        def _collect(pattern: str):
-            for m in re.finditer(pattern, sql_stripped, flags=re.IGNORECASE):
-                tbl = (m.group(1) or "").strip('`')
-                alias_raw = m.group(2)
-                alias = _normalize_alias(alias_raw) if alias_raw else ""
-                ref = alias if alias else f"`{tbl}`"
-                table_refs.append((tbl, ref))
-
-        _collect(r"\bfrom\s+([`\w\.]+)(?:\s+(?:as\s+)?([`\w]+))?")
-        _collect(r"\bjoin\s+([`\w\.]+)(?:\s+(?:as\s+)?([`\w]+))?")
-
-        seen_refs = set()
-        dedup_table_refs = []
-        for t, r in table_refs:
-            key = (t, r)
-            if key in seen_refs:
-                continue
-            seen_refs.add(key)
-            dedup_table_refs.append((t, r))
-
-        referenced_tables = {t for (t, _) in dedup_table_refs}
-        allowed = _fetch_allowed_tables()
-        if referenced_tables and any(t not in allowed for t in referenced_tables):
-            raise ValueError("Only supported tables can be accessed")
+        allowed_tables = _fetch_allowed_tables()
+        allowed_lookup = {t.lower() for t in allowed_tables}
 
         if sql_norm.startswith("show columns from ") or sql_norm.startswith("describe "):
-            if not referenced_tables:
+            pattern = re.compile(r"(?:show columns from|describe)\s+([`\w\.]+)", re.IGNORECASE)
+            match = pattern.search(sql_stripped)
+            table_name = ""
+            if match:
+                table_name = match.group(1).strip('`')
+            if not table_name:
                 raise ValueError("SHOW/DESCRIBE must specify a supported table name")
-            table = list(referenced_tables)[0]
-            if table not in allowed:
+            table_key = table_name.lower()
+            matching_table = next((name for name in allowed_tables if name.lower() == table_key), None)
+            if matching_table is None:
                 raise ValueError("Table is not accessible or does not exist")
+            table = matching_table
             conn = pymysql.connect(
                 host=db_host,
                 user=db_user,
@@ -187,43 +138,83 @@ def create_medical_tools(
                     rows = [r for r in cur.fetchall() if str(r.get('Field', '')).lower() != 'msid']
             return {"ok": True, "rows": rows}
 
-        if dedup_table_refs:
-            conditions = " AND ".join([f"{ref}.msid = %s" for (_, ref) in dedup_table_refs])
-            if has_placeholder:
-                sql_final = sql_stripped.replace("/*SCOPE_AND*/", conditions)
+        try:
+            parsed_query = parse_one(sql_stripped, read="mysql")
+        except ParseError as exc:
+            raise ValueError(f"Invalid SQL syntax: {exc}") from exc
+
+        referenced_tables = set()
+        for table_expr in parsed_query.find_all(exp.Table):
+            table_name = (table_expr.name or "").strip()
+            if table_name:
+                referenced_tables.add(table_name)
+        if referenced_tables and any((name.lower() not in allowed_lookup) for name in referenced_tables):
+            raise ValueError("Only supported tables can be accessed")
+
+        parameters: List[Any] = []
+
+        def _inject_scope_conditions(select_node: exp.Select):
+            from_clause = select_node.args.get("from")
+            if not from_clause:
+                return
+
+            table_nodes: List[exp.Table] = []
+
+            primary = from_clause.this
+            if isinstance(primary, exp.Table):
+                table_nodes.append(primary)
+
+            for join_expr in select_node.args.get("joins") or []:
+                join_target = getattr(join_expr, "this", None)
+                if isinstance(join_target, exp.Table):
+                    table_nodes.append(join_target)
+
+            # Deduplicate by alias (or table name when alias is absent)
+            dedup_nodes: List[exp.Table] = []
+            seen_aliases = set()
+            for table_node in table_nodes:
+                alias_or_name = table_node.alias_or_name or table_node.name
+                if not alias_or_name:
+                    continue
+                key = alias_or_name.lower()
+                if key in seen_aliases:
+                    continue
+                seen_aliases.add(key)
+                dedup_nodes.append(table_node)
+
+            scope_conditions: List[exp.Expression] = []
+            for table_node in dedup_nodes:
+                table_name = (table_node.name or "").lower()
+                if table_name and table_name not in allowed_lookup:
+                    raise ValueError("Only supported tables can be accessed")
+                if not table_name:
+                    continue
+                scope_conditions.append(
+                    exp.EQ(
+                        this=exp.column("msid", table=table_node.alias_or_name or table_node.name),
+                        expression=exp.Var(this="%s"),
+                    )
+                )
+                parameters.append(msid_value)
+
+            if not scope_conditions:
+                return
+
+            combined_condition = scope_conditions[0]
+            for extra_condition in scope_conditions[1:]:
+                combined_condition = exp.and_(combined_condition, extra_condition)
+
+            existing_where = select_node.args.get("where")
+            if existing_where:
+                combined_condition = exp.and_(existing_where.this, combined_condition)
+                existing_where.set("this", combined_condition)
             else:
-                clause_regexes = [
-                    r"\bgroup\s+by\b",
-                    r"\border\s+by\b",
-                    r"\bhaving\b",
-                    r"\blimit\b",
-                    r"\bunion\b",
-                    r"\bintersect\b",
-                    r"\bexcept\b",
-                    r"\bwindow\b",
-                    r"\bqualify\b",
-                ]
-                next_clause_pos = None
-                for pat in clause_regexes:
-                    m = re.search(pat, sql_stripped, flags=re.IGNORECASE)
-                    if m:
-                        pos = m.start()
-                        if next_clause_pos is None or pos < next_clause_pos:
-                            next_clause_pos = pos
-                semi_pos = sql_stripped.find(';')
-                if semi_pos != -1:
-                    if next_clause_pos is None or semi_pos < next_clause_pos:
-                        next_clause_pos = semi_pos
-                if next_clause_pos is None:
-                    next_clause_pos = len(sql_stripped)
-                has_where = re.search(r"\bwhere\b", sql_stripped, flags=re.IGNORECASE) is not None
-                insert_token = ((" AND " + conditions + " ") if has_where else (" WHERE " + conditions + " "))
-                sql_final = sql_stripped[:next_clause_pos] + insert_token + sql_stripped[next_clause_pos:]
-            parameters: List[Any] = []
-            parameters.extend([msid_value] * len(dedup_table_refs))
-        else:
-            sql_final = sql_stripped
-            parameters = []
+                select_node.set("where", exp.Where(this=combined_condition))
+
+        for select_expr in parsed_query.find_all(exp.Select):
+            _inject_scope_conditions(select_expr)
+
+        sql_final = parsed_query.sql(dialect="mysql")
 
         conn = pymysql.connect(
             host=db_host,

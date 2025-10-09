@@ -29,3 +29,6 @@ mcp>=1.13.1
 # PDF -> Markdown
 pymupdf>=1.24.9
 pymupdf4llm>=0.0.17
+
+# SQL AST parsing for scope injection
+sqlglot>=27.0.0,<28.0.0
