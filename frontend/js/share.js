@@ -390,16 +390,22 @@ class ShareApp {
             renderedContent = this.escapeHtml(content);
         }
         
-        messageDiv.innerHTML = `
-            <div class="message-bubble">
-                ${renderedContent}
-                <div class="message-timestamp">
-                    ${this.formatTimestamp(timestamp)}
-                </div>
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble';
+        bubble.innerHTML = `
+            ${renderedContent}
+            <div class="message-timestamp">
+                ${this.formatTimestamp(timestamp)}
             </div>
         `;
         
+        messageDiv.appendChild(bubble);
         this.chatMessages.appendChild(messageDiv);
+        
+        // 渲染 Mermaid 图表（如果存在）
+        if (typeof MarkdownRenderer !== 'undefined' && MarkdownRenderer.renderMermaidDiagrams) {
+            MarkdownRenderer.renderMermaidDiagrams(bubble, (t) => this.escapeHtml(t));
+        }
     }
     
     scrollToBottom() {
