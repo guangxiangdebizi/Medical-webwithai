@@ -750,6 +750,40 @@ async def delete_thread(session_id: str, conversation_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"删除对话线程失败: {str(e)}")
 
+@app.get("/api/query-examples")
+async def get_query_examples(count: int = 3):
+    """获取随机查询示例"""
+    import random
+    
+    try:
+        # 读取示例文件
+        examples_file = os.path.join(os.path.dirname(__file__), "queryexample.json")
+        
+        if not os.path.exists(examples_file):
+            raise HTTPException(status_code=404, detail="Query examples file not found")
+        
+        with open(examples_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        examples = data.get("examples", [])
+        
+        if not examples:
+            raise HTTPException(status_code=404, detail="No examples available")
+        
+        # 随机选择指定数量的示例
+        selected_count = min(count, len(examples))
+        selected_examples = random.sample(examples, selected_count)
+        
+        return {
+            "success": True,
+            "data": selected_examples,
+            "total": len(examples)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load query examples: {str(e)}")
+
 @app.get("/api/status")
 async def get_status():
     """获取系统状态"""

@@ -1,0 +1,154 @@
+{
+  "examples": [
+    {
+      "id": 1,
+      "text": "Query demographic information for all patients over 65 years old",
+      "category": "demographics",
+      "icon": "👥"
+    },
+    {
+      "id": 2,
+      "text": "Show list of serious adverse events (SAE) from the past week",
+      "category": "safety",
+      "icon": "⚠️"
+    },
+    {
+      "id": 3,
+      "text": "Generate enrollment trend chart for patient recruitment",
+      "category": "enrollment",
+      "icon": "📈"
+    },
+    {
+      "id": 4,
+      "text": "Analyze primary efficacy endpoint difference between treatment and control groups",
+      "category": "efficacy",
+      "icon": "🔬"
+    },
+    {
+      "id": 5,
+      "text": "Query all patients who discontinued due to adverse reactions",
+      "category": "safety",
+      "icon": "🚪"
+    },
+    {
+      "id": 6,
+      "text": "Calculate enrollment progress and completion rate by study site",
+      "category": "enrollment",
+      "icon": "🏥"
+    },
+    {
+      "id": 7,
+      "text": "Display baseline demographic characteristics summary table (Table 14.1.1)",
+      "category": "demographics",
+      "icon": "📊"
+    },
+    {
+      "id": 8,
+      "text": "Generate box plots for pharmacokinetic parameters",
+      "category": "pk",
+      "icon": "💊"
+    },
+    {
+      "id": 9,
+      "text": "Retrieve all protocol deviation records and their classifications",
+      "category": "compliance",
+      "icon": "📋"
+    },
+    {
+      "id": 10,
+      "text": "Query incidence rate of laboratory abnormalities (Grade 3/4)",
+      "category": "safety",
+      "icon": "🧪"
+    },
+    {
+      "id": 11,
+      "text": "Analyze subgroup analysis results for primary endpoint",
+      "category": "efficacy",
+      "icon": "🎯"
+    },
+    {
+      "id": 12,
+      "text": "Generate Kaplan-Meier curve for visit completion rate",
+      "category": "compliance",
+      "icon": "📉"
+    },
+    {
+      "id": 13,
+      "text": "Query concomitant medication usage patterns across all patients",
+      "category": "conmed",
+      "icon": "💉"
+    },
+    {
+      "id": 14,
+      "text": "Calculate dropout rate and reasons by treatment group",
+      "category": "disposition",
+      "icon": "📉"
+    },
+    {
+      "id": 15,
+      "text": "Show vital signs changes from baseline to each visit",
+      "category": "vitalsigns",
+      "icon": "❤️"
+    },
+    {
+      "id": 16,
+      "text": "Query all immunogenicity-related adverse events",
+      "category": "safety",
+      "icon": "🛡️"
+    },
+    {
+      "id": 17,
+      "text": "Generate exposure-efficacy correlation scatter plot",
+      "category": "pk",
+      "icon": "📊"
+    },
+    {
+      "id": 18,
+      "text": "Analyze statistical significance test results for secondary endpoints",
+      "category": "efficacy",
+      "icon": "🔍"
+    },
+    {
+      "id": 19,
+      "text": "Query patient compliance assessment data",
+      "category": "compliance",
+      "icon": "✅"
+    },
+    {
+      "id": 20,
+      "text": "Display ECG abnormal findings and their clinical significance",
+      "category": "safety",
+      "icon": "💓"
+    },
+    {
+      "id": 21,
+      "text": "Compare adverse event profiles between different age groups",
+      "category": "safety",
+      "icon": "👴"
+    },
+    {
+      "id": 22,
+      "text": "Generate forest plot for treatment effect across subgroups",
+      "category": "efficacy",
+      "icon": "🌲"
+    },
+    {
+      "id": 23,
+      "text": "Show distribution of patients by race and ethnicity",
+      "category": "demographics",
+      "icon": "🌍"
+    },
+    {
+      "id": 24,
+      "text": "Query all deaths and their relationship to study drug",
+      "category": "safety",
+      "icon": "⚰️"
+    },
+    {
+      "id": 25,
+      "text": "Analyze time to first adverse event by treatment arm",
+      "category": "safety",
+      "icon": "⏱️"
+    }
+  ]
+}

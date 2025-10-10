@@ -71,8 +71,17 @@ class ChatApp {
             await this.loadModelsAndRenderDropdown();
             this.setupWebSocket();
             await this.connectWebSocket();
+            
+            // 加载查询示例
+            await this.loadQueryExamples();
         } catch (error) {
             console.error('❌ 应用初始化失败:', error);
+        }
+    }
+    
+    async loadQueryExamples() {
+        if (typeof QueryExamples !== 'undefined') {
+            await QueryExamples.init(this);
         }
     }
     
@@ -272,8 +281,11 @@ class ChatApp {
         this.clearAttachmentChips();
         this.pendingAttachments = [];
 
-        // 隐藏欢迎消息
+        // 隐藏欢迎消息和示例
         this.hideWelcomeMessage();
+        if (typeof QueryExamples !== 'undefined') {
+            QueryExamples.hide();
+        }
 
         // 创建思维流
         this.thinkingFlow.createThinkingFlow();
