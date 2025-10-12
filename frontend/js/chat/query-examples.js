@@ -212,7 +212,7 @@
             styles.id = 'query-examples-styles';
             styles.textContent = `
                 .query-examples-container {
-                    margin-top: 2rem;
+                    margin-top: 1.5rem;
                     animation: fadeInUp 0.6s ease-out;
                 }
                 
@@ -231,13 +231,13 @@
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
-                    margin-bottom: 1rem;
-                    font-size: 1rem;
+                    margin-bottom: 0.75rem;
+                    font-size: 0.95rem;
                     color: #4a5568;
                 }
                 
                 .examples-icon {
-                    font-size: 1.2rem;
+                    font-size: 1.1rem;
                 }
                 
                 .examples-title {
@@ -245,47 +245,55 @@
                 }
                 
                 .query-examples-list {
-                    display: flex;
-                    flex-direction: column;
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
                     gap: 0.75rem;
                 }
                 
                 .example-card {
                     display: flex;
+                    flex-direction: column;
                     align-items: center;
-                    gap: 0.75rem;
-                    padding: 1rem 1.25rem;
+                    text-align: center;
+                    gap: 0.5rem;
+                    padding: 1rem 0.75rem;
                     background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
                     border: 1px solid #e2e8f0;
                     border-radius: 12px;
                     cursor: pointer;
                     transition: all 0.3s ease;
+                    min-height: 100px;
                 }
                 
                 .example-card:hover {
                     background: linear-gradient(135deg, #667eea25 0%, #764ba225 100%);
                     border-color: #667eea;
-                    transform: translateX(4px);
-                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+                    transform: translateY(-4px);
+                    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
                 }
                 
                 .example-icon {
-                    font-size: 1.5rem;
+                    font-size: 2rem;
                     flex-shrink: 0;
                 }
                 
                 .example-text {
                     flex: 1;
                     color: #2d3748;
-                    font-size: 0.95rem;
-                    line-height: 1.5;
+                    font-size: 0.85rem;
+                    line-height: 1.4;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 3;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
                 }
                 
                 .example-arrow {
-                    font-size: 1.2rem;
+                    font-size: 1rem;
                     color: #667eea;
                     opacity: 0;
                     transition: opacity 0.3s ease;
+                    margin-top: auto;
                 }
                 
                 .example-card:hover .example-arrow {
@@ -306,18 +314,54 @@
                     animation: inputFill 0.6s ease;
                 }
                 
-                /* 移动端适配 */
-                @media (max-width: 768px) {
+                /* 平板适配 */
+                @media (max-width: 1024px) {
+                    .query-examples-list {
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 0.6rem;
+                    }
+                    
                     .example-card {
-                        padding: 0.875rem 1rem;
+                        padding: 0.875rem 0.6rem;
+                        min-height: 90px;
                     }
                     
                     .example-text {
-                        font-size: 0.9rem;
+                        font-size: 0.8rem;
+                    }
+                }
+                
+                /* 移动端适配 */
+                @media (max-width: 768px) {
+                    .query-examples-container {
+                        margin-top: 1rem;
+                    }
+                    
+                    .query-examples-list {
+                        grid-template-columns: 1fr;
+                        gap: 0.5rem;
+                    }
+                    
+                    .example-card {
+                        flex-direction: row;
+                        text-align: left;
+                        padding: 0.75rem;
+                        min-height: auto;
+                        gap: 0.75rem;
                     }
                     
                     .example-icon {
-                        font-size: 1.3rem;
+                        font-size: 1.5rem;
+                    }
+                    
+                    .example-text {
+                        font-size: 0.85rem;
+                        -webkit-line-clamp: 2;
+                    }
+                    
+                    .example-arrow {
+                        margin-top: 0;
+                        margin-left: auto;
                     }
                 }
             `;
