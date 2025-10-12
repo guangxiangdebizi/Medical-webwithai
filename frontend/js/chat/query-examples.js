@@ -233,7 +233,8 @@
                     gap: 0.5rem;
                     margin-bottom: 0.75rem;
                     font-size: 0.95rem;
-                    color: #4a5568;
+                    color: var(--text-secondary);
+                    transition: color 0.3s ease;
                 }
                 
                 .examples-icon {
@@ -257,8 +258,8 @@
                     text-align: center;
                     gap: 0.5rem;
                     padding: 1rem 0.75rem;
-                    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-                    border: 1px solid #e2e8f0;
+                    background: var(--bg-tertiary);
+                    border: 1px solid var(--border-primary);
                     border-radius: 12px;
                     cursor: pointer;
                     transition: all 0.3s ease;
@@ -266,10 +267,10 @@
                 }
                 
                 .example-card:hover {
-                    background: linear-gradient(135deg, #667eea25 0%, #764ba225 100%);
-                    border-color: #667eea;
+                    background: var(--bg-hover);
+                    border-color: var(--brand-primary);
                     transform: translateY(-4px);
-                    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+                    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
                 }
                 
                 .example-icon {
@@ -279,20 +280,21 @@
                 
                 .example-text {
                     flex: 1;
-                    color: #2d3748;
+                    color: var(--text-primary);
                     font-size: 0.85rem;
                     line-height: 1.4;
                     display: -webkit-box;
                     -webkit-line-clamp: 3;
                     -webkit-box-orient: vertical;
                     overflow: hidden;
+                    transition: color 0.3s ease;
                 }
                 
                 .example-arrow {
                     font-size: 1rem;
-                    color: #667eea;
+                    color: var(--brand-primary);
                     opacity: 0;
-                    transition: opacity 0.3s ease;
+                    transition: opacity 0.3s ease, color 0.3s ease;
                     margin-top: auto;
                 }
                 
