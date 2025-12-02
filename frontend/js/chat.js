@@ -8,6 +8,10 @@ class ChatApp {
         this.sessionId = null;
         this.isStreaming = false;
         
+        // Doctor Review 模式
+        this.reviewMode = false;
+        this.reviewOutput = null;
+        
         // DOM 元素
         this.chatMessages = document.getElementById('chatMessages');
         this.welcomeHTML = (this.chatMessages.querySelector('.welcome-message')?.outerHTML) || '';
@@ -29,6 +33,16 @@ class ChatApp {
         this.pendingAttachments = [];
         
         this.init();
+    }
+    
+    /**
+     * 获取当前输出目标容器（普通模式用 chatMessages，审核模式用 reviewOutput）
+     */
+    getOutputContainer() {
+        if (this.reviewMode && this.reviewOutput) {
+            return this.reviewOutput;
+        }
+        return this.chatMessages;
     }
 
     // 在最后一条 AI 消息下面插入用量提示
@@ -355,6 +369,14 @@ class ChatApp {
     }
     
     startAIResponse() {
+        const container = this.getOutputContainer();
+        
+        // 审核模式下清除进度提示
+        if (this.reviewMode && this.reviewOutput) {
+            const progress = this.reviewOutput.querySelector('.review-progress');
+            if (progress) progress.remove();
+        }
+        
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message ai';
         messageDiv.innerHTML = `
@@ -363,7 +385,7 @@ class ChatApp {
             </div>
         `;
         
-        this.chatMessages.appendChild(messageDiv);
+        container.appendChild(messageDiv);
         this.currentAIMessage = messageDiv.querySelector('.message-bubble');
         this.currentAIContent = '';
         this.smartScrollToBottom(true);
@@ -446,6 +468,11 @@ class ChatApp {
     
     updateConnectionStatus(status) {
         UIController.updateConnectionStatus(status, this.connectionStatus, this.connectionText);
+        
+        // 更新 Doctor Review 模式的按钮状态
+        if (typeof ModelManager !== 'undefined') {
+            ModelManager.updateStartReviewButton(status === 'online');
+        }
     }
 
     setConnectionExtra(text) {

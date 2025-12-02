@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Clinical AI Assistant</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=20251202">
     <!-- Include marked.js for markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
     <!-- Include Mermaid for diagram rendering -->
@@ -45,7 +45,7 @@
         </header>
 
         <!-- Main chat area -->
-        <main class="chat-container">
+        <main class="chat-container" id="chatContainer">
             <!-- Chat messages area -->
             <div class="chat-messages" id="chatMessages">
                 <div class="welcome-message">
@@ -57,7 +57,7 @@
             </div>
 
             <!-- Input area -->
-            <div class="chat-input-container">
+            <div class="chat-input-container" id="chatInputContainer">
                 <div class="chat-input-wrapper">
                     <textarea 
                         id="messageInput" 
@@ -79,25 +79,70 @@
                 </div>
             </div>
         </main>
+
+        <!-- Doctor Review Mode (for Dr.M and Dr.S) -->
+        <main class="review-container" id="reviewContainer" style="display: none;">
+            <!-- Review Welcome Panel -->
+            <div class="review-welcome" id="reviewWelcome">
+                <div class="review-agent-info" id="reviewAgentInfo">
+                    <div class="review-agent-icon" id="reviewAgentIcon">🟠</div>
+                    <h2 id="reviewAgentTitle">Dr.M Medical Insight</h2>
+                    <p id="reviewAgentDesc">AI-powered clinical trial document review and safety analysis</p>
+                </div>
+                
+                <div class="review-capabilities">
+                    <div class="capability-card" id="capabilityCard1">
+                        <div class="capability-icon">📄</div>
+                        <h3>TFL Document Analysis</h3>
+                        <p>Automatically scan and analyze all PDF documents in your project</p>
+                    </div>
+                    <div class="capability-card" id="capabilityCard2">
+                        <div class="capability-icon">🔍</div>
+                        <h3>Safety Signal Detection</h3>
+                        <p>Identify potential safety concerns and adverse event patterns</p>
+                    </div>
+                    <div class="capability-card" id="capabilityCard3">
+                        <div class="capability-icon">📊</div>
+                        <h3>Statistical Validation</h3>
+                        <p>Verify calculations and data consistency across tables</p>
+                    </div>
+                </div>
+
+                <button id="startReviewBtn" class="start-review-btn" disabled>
+                    <span class="btn-icon">🚀</span>
+                    <span class="btn-text">Start Review</span>
+                </button>
+                <p class="review-hint" id="reviewHint">Connecting to AI service...</p>
+            </div>
+
+            <!-- Review Results Panel -->
+            <div class="review-results" id="reviewResults" style="display: none;">
+                <div class="review-results-header">
+                    <h3><span id="reviewResultIcon">🟠</span> <span id="reviewResultTitle">Analysis Results</span></h3>
+                    <button id="newReviewBtn" class="btn btn-secondary">New Review</button>
+                </div>
+                <div class="review-output" id="reviewOutput"></div>
+            </div>
+        </main>
     </div>
 
     <!-- JavaScript -->
-    <script src="js/config.js"></script>
-    <script src="js/theme-manager.js"></script>
-    <script src="js/ws.js"></script>
+    <script src="js/config.js?v=20251202"></script>
+    <script src="js/theme-manager.js?v=20251202"></script>
+    <script src="js/ws.js?v=20251202"></script>
     <!-- Chat modules -->
-    <script src="js/chat/thinking-flow.js"></script>
-    <script src="js/chat/message-actions.js"></script>
-    <script src="js/chat/history.js"></script>
-    <script src="js/chat/share-module.js"></script>
-    <script src="js/chat/markdown-renderer.js"></script>
-    <script src="js/chat/file-manager.js"></script>
-    <script src="js/chat/model-manager.js"></script>
-    <script src="js/chat/ui-controller.js"></script>
-    <script src="js/chat/websocket-handler.js"></script>
-    <script src="js/chat/event-listeners.js"></script>
-    <script src="js/chat/query-examples.js"></script>
+    <script src="js/chat/thinking-flow.js?v=20251202"></script>
+    <script src="js/chat/message-actions.js?v=20251202"></script>
+    <script src="js/chat/history.js?v=20251202"></script>
+    <script src="js/chat/share-module.js?v=20251202"></script>
+    <script src="js/chat/markdown-renderer.js?v=20251202"></script>
+    <script src="js/chat/file-manager.js?v=20251202"></script>
+    <script src="js/chat/model-manager.js?v=20251202"></script>
+    <script src="js/chat/ui-controller.js?v=20251202"></script>
+    <script src="js/chat/websocket-handler.js?v=20251202"></script>
+    <script src="js/chat/event-listeners.js?v=20251202"></script>
+    <script src="js/chat/query-examples.js?v=20251202"></script>
     <!-- Main chat application -->
-    <script src="js/chat.js"></script>
+    <script src="js/chat.js?v=20251202"></script>
 </body>
 </html>

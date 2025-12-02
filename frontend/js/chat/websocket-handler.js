@@ -118,6 +118,18 @@
                     // 结束流式，恢复按钮
                     app.isStreaming = false;
                     app.updateSendButton();
+                    
+                    // 审核模式完成后恢复按钮
+                    if (app.reviewMode) {
+                        const startReviewBtn = document.getElementById('startReviewBtn');
+                        if (startReviewBtn) {
+                            startReviewBtn.disabled = false;
+                            startReviewBtn.innerHTML = `
+                                <span class="btn-icon">🚀</span>
+                                <span class="btn-text">Start Review</span>
+                            `;
+                        }
+                    }
                     break;
                     
                 case 'token_usage':
@@ -135,6 +147,18 @@
                     app.thinkingFlow.completeThinkingFlow('error');
                     app.isStreaming = false;
                     app.updateSendButton();
+                    
+                    // 审核模式出错后恢复按钮
+                    if (app.reviewMode) {
+                        const startReviewBtn = document.getElementById('startReviewBtn');
+                        if (startReviewBtn) {
+                            startReviewBtn.disabled = false;
+                            startReviewBtn.innerHTML = `
+                                <span class="btn-icon">🚀</span>
+                                <span class="btn-text">Start Review</span>
+                            `;
+                        }
+                    }
                     break;
                     
                 default:

@@ -1806,3 +1806,267 @@ body {
 }
 
 /* 平滑过渡效果 - 已集成到各个组件中，不需要全局规则 */
+
+/* ============================================
+   Doctor Review Mode 审核模式样式
+   ============================================ */
+
+.review-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 2rem 1.5rem;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.review-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+    padding: 2rem;
+}
+
+.review-agent-info {
+    margin-bottom: 3rem;
+}
+
+.review-agent-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: agent-pulse 2s infinite ease-in-out;
+}
+
+@keyframes agent-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.review-agent-info h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.review-agent-info p {
+    font-size: 1.1rem;
+    color: var(--text-tertiary);
+    max-width: 500px;
+}
+
+/* Capability Cards */
+.review-capabilities {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    max-width: 900px;
+    width: 100%;
+}
+
+.capability-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.capability-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--brand-primary);
+}
+
+.capability-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.capability-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.capability-card p {
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+}
+
+/* Dr.M 橙色主题 */
+.review-container.doctor-m .capability-card:hover {
+    border-color: #ed8936;
+}
+
+.review-container.doctor-m .start-review-btn {
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.review-container.doctor-m .start-review-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+    box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
+}
+
+/* Dr.S 蓝色主题 */
+.review-container.doctor-s .capability-card:hover {
+    border-color: #4299e1;
+}
+
+.review-container.doctor-s .start-review-btn {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+}
+
+.review-container.doctor-s .start-review-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+    box-shadow: 0 8px 25px rgba(66, 153, 225, 0.4);
+}
+
+/* Start Review Button */
+.start-review-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.start-review-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.start-review-btn:disabled {
+    background: var(--btn-secondary-bg) !important;
+    color: var(--text-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.start-review-btn .btn-icon {
+    font-size: 1.25rem;
+}
+
+.review-hint {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.review-hint.ready {
+    color: var(--color-success);
+}
+
+/* Review Results */
+.review-results {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border-radius: 1rem;
+    border: 1px solid var(--border-primary);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.review-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.review-results-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.review-output {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    line-height: 1.6;
+}
+
+/* Review output 内的消息样式 */
+.review-output .message {
+    margin-bottom: 1rem;
+}
+
+.review-output .message.ai .message-bubble {
+    max-width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+}
+
+/* Review Progress Indicator */
+.review-progress {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--thinking-bg);
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.review-progress-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--border-primary);
+    border-top: 3px solid var(--brand-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.review-progress-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .review-capabilities {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .review-agent-info h2 {
+        font-size: 1.5rem;
+    }
+    
+    .start-review-btn {
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .review-container {
+        padding: 1rem;
+    }
+}

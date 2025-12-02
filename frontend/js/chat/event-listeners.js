@@ -15,6 +15,7 @@
             this.setupFileUpload(app);
             this.setupPasteImage(app);
             this.setupPageUnload(app);
+            this.setupDoctorReview(app);
         },
 
         /**
@@ -236,6 +237,99 @@
             window.addEventListener('beforeunload', () => {
                 app.wsManager.close();
             });
+        },
+        
+        /**
+         * 设置 Doctor Review 模式的事件监听
+         */
+        setupDoctorReview(app) {
+            const startReviewBtn = document.getElementById('startReviewBtn');
+            const newReviewBtn = document.getElementById('newReviewBtn');
+            const reviewWelcome = document.getElementById('reviewWelcome');
+            const reviewResults = document.getElementById('reviewResults');
+            const reviewOutput = document.getElementById('reviewOutput');
+            
+            if (startReviewBtn) {
+                startReviewBtn.addEventListener('click', async () => {
+                    if (!app.wsManager.isConnected()) {
+                        app.showError('Not connected to AI service');
+                        return;
+                    }
+                    
+                    // 禁用按钮防止重复点击
+                    startReviewBtn.disabled = true;
+                    startReviewBtn.innerHTML = `
+                        <span class="btn-icon" style="animation: spin 1s linear infinite;">⏳</span>
+                        <span class="btn-text">Analyzing...</span>
+                    `;
+                    
+                    // 切换到结果面板
+                    if (reviewWelcome) reviewWelcome.style.display = 'none';
+                    if (reviewResults) reviewResults.style.display = 'flex';
+                    
+                    // 清空之前的输出
+                    if (reviewOutput) {
+                        reviewOutput.innerHTML = `
+                            <div class="review-progress">
+                                <div class="review-progress-spinner"></div>
+                                <div class="review-progress-text">Starting comprehensive document review...</div>
+                            </div>
+                        `;
+                    }
+                    
+                    // 设置 app 的输出目标为 reviewOutput
+                    app.reviewMode = true;
+                    app.reviewOutput = reviewOutput;
+                    
+                    // 发送自动审核触发消息
+                    const payload = {
+                        type: 'user_msg',
+                        content: '[AUTO_REVIEW_START]'
+                    };
+                    
+                    // 创建思维流
+                    app.thinkingFlow.createThinkingFlow();
+                    
+                    const success = app.wsManager.send(payload);
+                    
+                    if (!success) {
+                        app.showError('Failed to start review, please check connection');
+                        startReviewBtn.disabled = false;
+                        startReviewBtn.innerHTML = `
+                            <span class="btn-icon">🚀</span>
+                            <span class="btn-text">Start Review</span>
+                        `;
+                    }
+                });
+            }
+            
+            // 新建审核按钮
+            if (newReviewBtn) {
+                newReviewBtn.addEventListener('click', () => {
+                    // 重置 UI
+                    if (reviewWelcome) reviewWelcome.style.display = 'flex';
+                    if (reviewResults) reviewResults.style.display = 'none';
+                    if (reviewOutput) reviewOutput.innerHTML = '';
+                    
+                    // 重置按钮状态
+                    if (startReviewBtn) {
+                        startReviewBtn.disabled = false;
+                        startReviewBtn.innerHTML = `
+                            <span class="btn-icon">🚀</span>
+                            <span class="btn-text">Start Review</span>
+                        `;
+                    }
+                    
+                    // 退出审核模式
+                    app.reviewMode = false;
+                    app.reviewOutput = null;
+                    
+                    // 刷新页面以重置状态
+                    try { 
+                        window.location.reload(); 
+                    } catch (e) {}
+                });
+            }
         }
     };
 

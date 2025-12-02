@@ -32,7 +32,11 @@ class ThinkingFlow {
             </div>
         `;
 
-        this.appInstance.chatMessages.appendChild(flowDiv);
+        // 获取输出容器（支持审核模式）
+        const container = this.appInstance.getOutputContainer ? 
+            this.appInstance.getOutputContainer() : 
+            this.appInstance.chatMessages;
+        container.appendChild(flowDiv);
         this.currentThinkingFlow = flowDiv;
         // 初始化统计
         this.toolStats = { planned: 0, started: 0, completed: 0, error: 0 };
