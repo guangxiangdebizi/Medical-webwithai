@@ -166,8 +166,18 @@ class WebMCPAgent:
         return {"models": models, "default": effective_default}
 
     def _get_or_create_llm_instances(self, profile_id: str) -> Dict[str, Any]:
-        """根据档位获取/创建对应的 LLM 实例集合：llm、llm_nontool、llm_tools。"""
-        return self.model_manager.get_or_create_llm_instances(profile_id, self.tools)
+        """根据档位获取/创建对应的 LLM 实例集合：llm、llm_nontool、llm_tools。
+        
+        对于 DOCTOR_M 和 DOCTOR_S，使用专属的 PDF 工具而非通用工具。
+        """
+        # 判断是否为 Doctor Agent
+        if self.tools_manager.is_doctor_agent(profile_id):
+            # Doctor Agent 使用专属工具
+            agent_tools = self.tools_manager.get_tools_for_agent(profile_id)
+            return self.model_manager.get_or_create_llm_instances(profile_id, agent_tools)
+        else:
+            # 其他 Agent 使用通用工具
+            return self.model_manager.get_or_create_llm_instances(profile_id, self.tools)
 
     async def initialize(self):
         """初始化智能体"""
@@ -322,6 +332,9 @@ class WebMCPAgent:
 
             llm_bundle = self._get_or_create_llm_instances(profile_id)
             current_llm_tools = llm_bundle.get("llm_tools", self.llm_tools)
+            
+            # 获取当前 Agent 对应的工具列表（Doctor Agent 使用专属工具）
+            active_tools = self.tools_manager.get_tools_for_agent(profile_id) if profile_id else self.tools
 
             # 1) 构建共享消息历史（不包含系统提示，便于两套系统提示分别注入）
             # 检查当前模型是否已知不支持多模态
@@ -532,7 +545,7 @@ class WebMCPAgent:
 
                         try:
                             target_tool = None
-                            for tool in self.tools:
+                            for tool in active_tools:
                                 if tool.name == tool_name:
                                     target_tool = tool
                                     break

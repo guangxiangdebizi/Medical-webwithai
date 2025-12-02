@@ -14,10 +14,14 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from medicaltool import create_medical_tools
 from basictool import create_basic_tools
 from newtool import create_markdown_tools
+from doctortool import create_doctor_tools
 
 
 class MCPToolsManager:
     """MCP工具管理器"""
+    
+    # Doctor Agent 专属工具的档位ID列表
+    DOCTOR_AGENT_IDS = {"DOCTOR_M", "DOCTOR_S"}
     
     def __init__(self):
         self.tools: List[Any] = []
@@ -25,6 +29,14 @@ class MCPToolsManager:
         self.server_configs: Dict[str, Dict[str, Any]] = {}
         self.mcp_client: Optional[MultiServerMCPClient] = None
         self._used_tool_names: Set[str] = set()
+        
+        # 存储配置以便后续创建 Agent 专属工具
+        self._db_config: Dict[str, Any] = {}
+        self._session_contexts: Dict[str, Dict[str, Any]] = {}
+        self._current_session_id_ctx = None
+        
+        # Agent 专属工具缓存
+        self._agent_tools_cache: Dict[str, List[Any]] = {}
         
     async def initialize_mcp_tools(self, server_configs: Dict[str, Dict[str, Any]], 
                                  db_config: Dict[str, Any], 
@@ -45,6 +57,11 @@ class MCPToolsManager:
         """
         try:
             self.server_configs = server_configs
+            
+            # 存储配置以便后续创建 Agent 专属工具
+            self._db_config = db_config
+            self._session_contexts = session_contexts
+            self._current_session_id_ctx = current_session_id_ctx
             
             # 允许没有外部MCP服务器，仅使用本地工具
             if not self.server_configs:
@@ -299,6 +316,55 @@ class MCPToolsManager:
             "total_tools": total_tools,
             "server_count": len(servers_info)
         }
+    
+    def get_tools_for_agent(self, agent_id: str) -> List[Any]:
+        """获取特定 Agent 的工具列表
+        
+        对于 DOCTOR_M 和 DOCTOR_S，返回专属的 PDF 阅读工具
+        其他 Agent 返回通用工具列表
+        
+        Args:
+            agent_id: Agent/模型档位 ID (如 DOCTOR_M, DOCTOR_S, DEEPSEEK 等)
+            
+        Returns:
+            工具列表
+        """
+        agent_upper = (agent_id or "").upper()
+        
+        # 非 Doctor Agent，返回通用工具
+        if agent_upper not in self.DOCTOR_AGENT_IDS:
+            return self.tools
+        
+        # Doctor Agent 使用缓存
+        if agent_upper in self._agent_tools_cache:
+            return self._agent_tools_cache[agent_upper]
+        
+        # 创建 Doctor Agent 专属工具
+        try:
+            doctor_tools = create_doctor_tools(
+                db_host=self._db_config.get('host'),
+                db_user=self._db_config.get('user'),
+                db_password=self._db_config.get('password'),
+                db_name=self._db_config.get('name'),
+                db_port=self._db_config.get('port'),
+                session_contexts=self._session_contexts,
+                current_session_id_ctx=self._current_session_id_ctx,
+                agent_type=agent_upper,
+            )
+            
+            # Doctor Agent 只使用专属工具，不包含通用工具
+            self._agent_tools_cache[agent_upper] = doctor_tools
+            print(f"🩺 已为 {agent_upper} 创建 {len(doctor_tools)} 个专属 PDF 工具")
+            return doctor_tools
+            
+        except Exception as e:
+            print(f"⚠️ 创建 {agent_upper} 专属工具失败: {e}")
+            # 降级返回空列表
+            return []
+    
+    def is_doctor_agent(self, agent_id: str) -> bool:
+        """判断是否为 Doctor Agent"""
+        return (agent_id or "").upper() in self.DOCTOR_AGENT_IDS
     
     async def close(self):
         """关闭连接"""
