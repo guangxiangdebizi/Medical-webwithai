@@ -9,7 +9,111 @@ MCP Web 智能助手是一个集成前后端的智能问答与工具编排平台
 
 ---
 
-## 目录结构
+## 🐬 Dolphin Trinity AI™ 生态系统
+
+### 概述
+
+Dolphin Trinity AI™ 是一个由三位 AI Agent 组成的临床试验文档审核生态系统：
+
+| Agent | 代号 | 角色 | 核心关注 |
+|-------|------|------|----------|
+| 🔵 **Dr. S** | StatGuard | 审计专家 | 合规与完整性 |
+| 🟠 **Dr. M** | MediSense | 医学专家 | 安全与解读 |
+| 🔷 **Dr. D** | Data Agent | 数据侦探 | 语境与证据 |
+
+**工作流**: Check → Think → Find  
+Dr. S 和 Dr. M 告诉您发生了**什么**，Dr. D 帮您找到**为什么**。
+
+### 目录结构
+
+```
+Medical-webwithai/
+├── backend/           # 原有 Dr.D (Data Agent) 后端
+├── frontend/          # 原有 Dr.D 前端
+├── backend1/          # 🆕 Dolphin Trinity AI™ 后端 (Dr.S + Dr.M)
+├── frontend1/         # 🆕 Dolphin Trinity AI™ 前端展示页
+├── .venv/             # 原有虚拟环境
+├── .venv1/            # 🆕 Trinity AI 虚拟环境
+├── ecosystem.config.js # 🆕 PM2 配置文件
+├── nginx/trinity.conf  # 🆕 Nginx 配置片段
+└── logs/              # 日志目录
+```
+
+### 快速启动 Trinity AI
+
+#### 1. 激活虚拟环境
+
+```bash
+cd /home/ec2-user/AIWebHere/Medical-webwithai
+source .venv1/bin/activate
+```
+
+#### 2. 使用 PM2 启动服务
+
+```bash
+# 启动所有服务
+pm2 start ecosystem.config.js
+
+# 或分别启动
+pm2 start ecosystem.config.js --only trinity-backend
+pm2 start ecosystem.config.js --only trinity-frontend
+
+# 查看状态
+pm2 status
+
+# 查看日志
+pm2 logs trinity-backend
+pm2 logs trinity-frontend
+```
+
+#### 3. 配置 Nginx
+
+将 `nginx/trinity.conf` 的内容添加到您的 `dolphincr.conf` 中：
+
+```bash
+# 编辑 nginx 配置
+sudo nano /etc/nginx/conf.d/dolphincr.conf
+
+# 在 server 块内添加 trinity.conf 的内容
+
+# 测试配置
+sudo nginx -t
+
+# 重载 nginx
+sudo nginx -s reload
+```
+
+#### 4. 访问页面
+
+- **Trinity AI 首页**: https://dolphincr.com/trinity/
+- **Dr. S 页面**: https://dolphincr.com/trinity/dr-s.html
+- **Dr. M 页面**: https://dolphincr.com/trinity/dr-m.html
+- **Dr. D 页面**: https://dolphincr.com/ai/ (原有)
+
+### API 端点
+
+#### Trinity Backend (端口 8081)
+
+| 端点 | 方法 | 描述 |
+|------|------|------|
+| `/api/upload` | POST | 上传 PDF 文件 |
+| `/api/analyze/dr-s` | POST | 运行 Dr.S 分析 |
+| `/api/analyze/dr-m` | POST | 运行 Dr.M 分析 |
+| `/api/agents` | GET | 获取 Agent 信息 |
+| `/health` | GET | 健康检查 |
+
+### 端口分配
+
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| Trinity Backend | 8081 | Dr.S + Dr.M API |
+| Trinity Frontend | 3031 | 静态页面服务 |
+| 原有 AI Backend | 8080 | Dr.D API |
+| 原有 AI Frontend | 3030 | Dr.D 页面 |
+
+---
+
+## 原有目录结构
 
 - `backend/`：FastAPI 服务端源码，包含 MCP 代理、数据库、工具定义等。 
 - `frontend/`：前端静态资源，默认通过 nginx/静态服务器托管。 
@@ -127,4 +231,3 @@ uvicorn main:app --host 0.0.0.0 --port 8003
 - 若需分享或部署演示版本，可将 `.env.example` 中的密钥留空，仅保留必要结构。
 
 欢迎根据业务场景继续扩展 MCP 工具与前端交互。祝使用愉快！
-

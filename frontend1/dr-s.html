@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. S (StatGuard) - Dolphin Trinity AI™</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/agent-pages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="agent-page agent-page-blue">
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">🐬</span>
+                <span class="logo-text">Dolphin Trinity AI™</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Ecosystem</a>
+                <a href="dr-s.html" class="nav-link active">Dr. S</a>
+                <a href="dr-m.html" class="nav-link">Dr. M</a>
+                <a href="/ai/" class="nav-link">Dr. D</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Agent Header -->
+    <header class="agent-header">
+        <div class="agent-header-bg">
+            <div class="light-stream stream-blue-large"></div>
+        </div>
+        <div class="container">
+            <div class="agent-intro">
+                <div class="agent-badge blue-badge">
+                    <div class="badge-core"></div>
+                </div>
+                <div class="agent-info">
+                    <span class="agent-label">The Auditor</span>
+                    <h1>Dr. S <span class="agent-codename">StatGuard</span></h1>
+                    <p class="agent-tagline">Compliance & Integrity</p>
+                </div>
+            </div>
+            <p class="agent-description">
+                Dr. S ensures your CRO deliverables are flawless in form and logic. 
+                Every footer, every calculation, every version change — nothing escapes StatGuard's precision.
+            </p>
+            <div class="agent-signature">
+                <span class="signature-word">Precision.</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Demo Section -->
+    <section class="demo-section">
+        <div class="container">
+            <h2 class="section-title">Live Analysis Demo</h2>
+            <p class="section-subtitle">Upload a clinical output PDF and watch Dr. S in action</p>
+
+            <!-- Split Screen Demo -->
+            <div class="demo-container">
+                <!-- Left: PDF Preview -->
+                <div class="demo-panel pdf-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📄</span>
+                        <span class="panel-title">PDF Preview</span>
+                        <span class="panel-filename" id="currentFileName">No file loaded</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="upload-zone" id="uploadZone">
+                            <div class="upload-icon">📤</div>
+                            <p>Drag & drop your PDF here</p>
+                            <span>or</span>
+                            <button class="btn btn-secondary" id="selectFileBtn">Select File</button>
+                            <input type="file" id="fileInput" accept=".pdf" hidden>
+                        </div>
+                        <div class="pdf-viewer" id="pdfViewer" style="display: none;">
+                            <canvas id="pdfCanvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Analysis Panel -->
+                <div class="demo-panel analysis-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">🔵</span>
+                        <span class="panel-title">Dr. S Analysis</span>
+                        <button class="btn btn-primary btn-sm" id="runAnalysisBtn" disabled>
+                            Run Dr. S Review
+                        </button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="analysis-placeholder" id="analysisPlaceholder">
+                            <div class="placeholder-icon">🔍</div>
+                            <p>Upload a PDF to begin analysis</p>
+                        </div>
+                        
+                        <div class="analysis-results" id="analysisResults" style="display: none;">
+                            <!-- Step 1: Formatting -->
+                            <div class="analysis-step" id="step1">
+                                <div class="step-header">
+                                    <span class="step-number">1</span>
+                                    <span class="step-title">Formatting & Metadata Check</span>
+                                    <span class="step-status" id="step1Status">⏳</span>
+                                </div>
+                                <div class="step-content" id="step1Content"></div>
+                            </div>
+
+                            <!-- Step 2: Logic -->
+                            <div class="analysis-step" id="step2">
+                                <div class="step-header">
+                                    <span class="step-number">2</span>
+                                    <span class="step-title">Logic & Calculation Check</span>
+                                    <span class="step-status" id="step2Status">⏳</span>
+                                </div>
+                                <div class="step-content" id="step2Content"></div>
+                            </div>
+
+                            <!-- Step 3: Cross Check -->
+                            <div class="analysis-step" id="step3">
+                                <div class="step-header">
+                                    <span class="step-number">3</span>
+                                    <span class="step-title">Cross-Table Consistency Check</span>
+                                    <span class="step-status" id="step3Status">⏳</span>
+                                </div>
+                                <div class="step-content" id="step3Content"></div>
+                            </div>
+
+                            <!-- Step 4: Diff Check -->
+                            <div class="analysis-step" id="step4">
+                                <div class="step-header">
+                                    <span class="step-number">4</span>
+                                    <span class="step-title">Version Difference Summary</span>
+                                    <span class="step-status" id="step4Status">⏳</span>
+                                </div>
+                                <div class="step-content" id="step4Content"></div>
+                            </div>
+
+                            <!-- Summary -->
+                            <div class="analysis-summary" id="analysisSummary"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Capabilities Section -->
+    <section class="capabilities-section">
+        <div class="container">
+            <h2 class="section-title">What Dr. S Checks</h2>
+            <div class="capabilities-grid">
+                <div class="capability-card">
+                    <div class="capability-icon">📋</div>
+                    <h3>Footer/Header Consistency</h3>
+                    <p>Validates data cutoff dates, program names, and ensures no placeholder text remains (DDMMMYYYY).</p>
+                    <div class="capability-example">
+                        <code>[ALERT] Data Cutoff Date is a placeholder: DDMMMYYYY found</code>
+                    </div>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-icon">🔢</div>
+                    <h3>Mathematical Logic</h3>
+                    <p>Recalculates every percentage (n/N%) and validates against reported values.</p>
+                    <div class="capability-example">
+                        <code>6 / 127 = 4.72%. Reported: 4.7%. ✅ Match</code>
+                    </div>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-icon">📐</div>
+                    <h3>Shell Compliance</h3>
+                    <p>Checks page numbering, table structure alignment with shell templates.</p>
+                    <div class="capability-example">
+                        <code>Page numbering "Page 1 of 1" is correct</code>
+                    </div>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-icon">🔄</div>
+                    <h3>Version Diff Check</h3>
+                    <p>Compares current vs previous versions, detecting added rows, changed values, and formatting updates.</p>
+                    <div class="capability-example">
+                        <code>Row Added: "Septic shock" was not present in v1.0</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Output Example -->
+    <section class="output-section">
+        <div class="container">
+            <h2 class="section-title">Sample Output</h2>
+            <div class="output-preview">
+                <div class="output-terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-dot red"></span>
+                        <span class="terminal-dot yellow"></span>
+                        <span class="terminal-dot green"></span>
+                        <span class="terminal-title">Dr. S Analysis Report</span>
+                    </div>
+                    <div class="terminal-body">
+<pre><code><span class="code-section">1. Formatting & Metadata Check</span>
+<span class="code-status warning">Status: ⚠️ WARNING</span>
+
+<span class="code-label">Footer Consistency:</span>
+  <span class="code-alert">* [ALERT] Data Cutoff Date is a placeholder: DDMMMYYYY found in footer.</span>
+  <span class="code-alert">* [ALERT] Data Extraction Date is a placeholder: DDMMMYYYY found.</span>
+  <span class="code-info">* Program Name: t-ae-pt.sas detected.</span>
+
+<span class="code-label">Shell Compliance:</span>
+  <span class="code-success">* Page numbering "Page 1 of 1" is correct.</span>
+  <span class="code-success">* Table Title aligns with Shell T14.3.1.4 structure.</span>
+
+<span class="code-section">2. Logic & Calculation Check</span>
+<span class="code-status success">Status: ✅ PASS</span>
+
+<span class="code-label">Percentage Verification (Sampled):</span>
+  Row "Patients with at Least One TEAE" (Drug XYZ): 
+    <span class="code-calc">6 / 127 = 4.72%</span>. Reported: 4.7%. <span class="code-success">(Match)</span>
+  Row "Pneumonia" (Placebo): 
+    <span class="code-calc">1 / 126 = 0.79%</span>. Reported: 0.8%. <span class="code-success">(Match)</span>
+
+<span class="code-label">Sorting Rule Validation:</span>
+  <span class="code-info">* Rule: Descending frequency in "Drug XYZ" column</span>
+  <span class="code-success">* Result: Order is correct.</span>
+
+<span class="code-section">3. Cross-Table Consistency Check</span>
+<span class="code-status success">Status: ✅ PASS</span>
+
+<span class="code-label">Reference: Listing 16.2.7 (Death Listing)</span>
+  <span class="code-info">* Check: t-3-ae-pt-dth reports 2 deaths in Drug XYZ arm.</span>
+  <span class="code-info">* Target: Listing t-dth contains 2 records for Drug XYZ with outcome 'Fatal'.</span>
+  <span class="code-success">* Result: Consistent.</span>
+
+<span class="code-section">4. Version Difference Summary</span>
+<span class="code-status info">Status: ℹ️ CHANGES DETECTED</span>
+
+<span class="code-label">Summary of Changes:</span>
+  <span class="code-change">* Row Added: "Septic shock" (Placebo: 1 [0.8%]) was not present in v1.0.</span>
+  <span class="code-change">* Value Changed: "Pneumonia" (Placebo) increased from 0 (0.0%) to 1 (0.8%).</span>
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐬</span>
+                    <span>Dolphin Trinity AI™</span>
+                </div>
+                <p class="footer-tagline">Your Digital Clinical Board</p>
+                <p class="footer-copyright">© 2024 ClinReviewPlatform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/dr-s.js"></script>
+</body>
+</html>
+
+

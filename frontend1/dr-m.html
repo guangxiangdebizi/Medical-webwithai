@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. M (MediSense) - Dolphin Trinity AI™</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/agent-pages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="agent-page agent-page-amber">
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">🐬</span>
+                <span class="logo-text">Dolphin Trinity AI™</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Ecosystem</a>
+                <a href="dr-s.html" class="nav-link">Dr. S</a>
+                <a href="dr-m.html" class="nav-link active">Dr. M</a>
+                <a href="/ai/" class="nav-link">Dr. D</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Agent Header -->
+    <header class="agent-header">
+        <div class="agent-header-bg">
+            <div class="light-stream stream-amber-large"></div>
+        </div>
+        <div class="container">
+            <div class="agent-intro">
+                <div class="agent-badge amber-badge">
+                    <div class="badge-core"></div>
+                </div>
+                <div class="agent-info">
+                    <span class="agent-label">The Scientist</span>
+                    <h1>Dr. M <span class="agent-codename">MediSense</span></h1>
+                    <p class="agent-tagline">Safety & Interpretation</p>
+                </div>
+            </div>
+            <p class="agent-description">
+                Dr. M is your tireless medical monitor, watching every safety signal and interpreting clinical patterns.
+                From mortality balance to sentinel events — MediSense understands what the data means.
+            </p>
+            <div class="agent-signature">
+                <span class="signature-word amber">Insight.</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Demo Section -->
+    <section class="demo-section">
+        <div class="container">
+            <h2 class="section-title">Live Analysis Demo</h2>
+            <p class="section-subtitle">Upload a clinical output PDF and watch Dr. M interpret the safety data</p>
+
+            <!-- Split Screen Demo -->
+            <div class="demo-container">
+                <!-- Left: PDF Preview -->
+                <div class="demo-panel pdf-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📄</span>
+                        <span class="panel-title">PDF Preview</span>
+                        <span class="panel-filename" id="currentFileName">No file loaded</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="upload-zone" id="uploadZone">
+                            <div class="upload-icon">📤</div>
+                            <p>Drag & drop your PDF here</p>
+                            <span>or</span>
+                            <button class="btn btn-secondary" id="selectFileBtn">Select File</button>
+                            <input type="file" id="fileInput" accept=".pdf" hidden>
+                        </div>
+                        <div class="pdf-viewer" id="pdfViewer" style="display: none;">
+                            <canvas id="pdfCanvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Analysis Panel -->
+                <div class="demo-panel analysis-panel amber-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">🟠</span>
+                        <span class="panel-title">Dr. M Analysis</span>
+                        <button class="btn btn-amber btn-sm" id="runAnalysisBtn" disabled>
+                            Run Dr. M Review
+                        </button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="analysis-placeholder" id="analysisPlaceholder">
+                            <div class="placeholder-icon">🩺</div>
+                            <p>Upload a PDF to begin medical analysis</p>
+                        </div>
+                        
+                        <div class="analysis-results" id="analysisResults" style="display: none;">
+                            <!-- Panel 1: Overview -->
+                            <div class="analysis-step" id="panel1">
+                                <div class="step-header amber-header">
+                                    <span class="step-number">1</span>
+                                    <span class="step-title">Safety Signal & Mortality Overview</span>
+                                    <span class="step-status" id="panel1Status">⏳</span>
+                                </div>
+                                <div class="step-content" id="panel1Content"></div>
+                            </div>
+
+                            <!-- Panel 2: Sentinel Events -->
+                            <div class="analysis-step" id="panel2">
+                                <div class="step-header amber-header">
+                                    <span class="step-number">2</span>
+                                    <span class="step-title">Sentinel Events (Red Flags)</span>
+                                    <span class="step-status" id="panel2Status">⏳</span>
+                                </div>
+                                <div class="step-content" id="panel2Content"></div>
+                            </div>
+
+                            <!-- Panel 3: Contextual Analysis -->
+                            <div class="analysis-step" id="panel3">
+                                <div class="step-header amber-header">
+                                    <span class="step-number">3</span>
+                                    <span class="step-title">Demographics Contextualization</span>
+                                    <span class="step-status" id="panel3Status">⏳</span>
+                                </div>
+                                <div class="step-content" id="panel3Content"></div>
+                            </div>
+
+                            <!-- Panel 4: Summary -->
+                            <div class="analysis-step" id="panel4">
+                                <div class="step-header amber-header">
+                                    <span class="step-number">4</span>
+                                    <span class="step-title">Medical Review Summary</span>
+                                    <span class="step-status" id="panel4Status">⏳</span>
+                                </div>
+                                <div class="step-content" id="panel4Content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Capabilities Section -->
+    <section class="capabilities-section amber-capabilities">
+        <div class="container">
+            <h2 class="section-title">What Dr. M Analyzes</h2>
+            <div class="capabilities-grid">
+                <div class="capability-card">
+                    <div class="capability-icon">📊</div>
+                    <h3>Signal Detection</h3>
+                    <p>Identifies treatment-emergent patterns, mortality imbalances, and unexpected safety trends.</p>
+                    <div class="capability-example amber-example">
+                        <code>Overall mortality balanced: 4.7% vs 4.8%</code>
+                    </div>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-icon">🚨</div>
+                    <h3>Sentinel Events</h3>
+                    <p>Flags rare but critical events like fistula, myocarditis, or other irAEs requiring immediate attention.</p>
+                    <div class="capability-example amber-example">
+                        <code>🔴 CRITICAL: Acquired Tracheo-oesophageal Fistula detected</code>
+                    </div>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-icon">🧬</div>
+                    <h3>Medical Context</h3>
+                    <p>Connects events to known drug mechanisms, patient demographics, and treatment history.</p>
+                    <div class="capability-example amber-example">
+                        <code>Myocarditis is a known irAE for checkpoint inhibitors</code>
+                    </div>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-icon">📝</div>
+                    <h3>Action Items</h3>
+                    <p>Generates prioritized recommendations for narrative writing, protocol checks, and data queries.</p>
+                    <div class="capability-example amber-example">
+                        <code>→ Prioritize drafting narratives for Fistula case</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Output Example -->
+    <section class="output-section">
+        <div class="container">
+            <h2 class="section-title">Sample Output</h2>
+            <div class="output-preview">
+                <div class="output-terminal amber-terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-dot red"></span>
+                        <span class="terminal-dot yellow"></span>
+                        <span class="terminal-dot green"></span>
+                        <span class="terminal-title">Dr. M Medical Analysis Report</span>
+                    </div>
+                    <div class="terminal-body">
+<pre><code><span class="code-section">1. Safety Signal & Mortality Overview</span>
+<span class="code-status warning">Status: ⚠️ Attention Required</span>
+
+<span class="code-label">Mortality Balance:</span>
+  <span class="code-info">* Overall TEAEs leading to death are balanced: 4.7% (Drug XYZ) vs 4.8% (Placebo)</span>
+  <span class="code-success">* Insight: The drug does not appear to increase all-cause mortality.</span>
+
+<span class="code-label">Specific Imbalances (Causes of Death):</span>
+  <span class="code-info">* Drug XYZ: Deaths driven by organ-specific failures (Fistula, Myocarditis)</span>
+  <span class="code-info">* Placebo: Deaths driven by infection/respiratory issues (Pneumonia, Septic shock)</span>
+
+<span class="code-section">2. Sentinel Events (Red Flags)</span>
+
+<span class="code-alert-critical">🔴 CRITICAL ALERT: Acquired Tracheo-oesophageal Fistula</span>
+  <span class="code-info">* Count: 1 Subject (0.8%) in Drug XYZ arm</span>
+  <span class="code-context">* Medical Context: Rare, life-threatening event associated with VEGF inhibitors 
+    or concurrent radiation therapy.</span>
+  <span class="code-action">* Recommendation: Immediate Patient Profile review required. 
+    Check: Did this patient receive thoracic radiation?</span>
+
+<span class="code-alert-warning">🟠 WARNING: Myocarditis</span>
+  <span class="code-info">* Count: 1 Subject (0.8%) in Drug XYZ arm</span>
+  <span class="code-context">* Medical Context: Known immune-related Adverse Event (irAE) for checkpoint inhibitors.</span>
+  <span class="code-action">* Recommendation: Check if death occurred early in treatment. Verify Troponin levels.</span>
+
+<span class="code-section">3. Demographics Contextualization</span>
+
+<span class="code-label">Event: Brain injury (1 Death in Drug XYZ)</span>
+  <span class="code-info">* Cross-Reference: Demographics table</span>
+  <span class="code-info">* Median Age: 76.0 years | Age ≥ 65: 86.6%</span>
+  <span class="code-context">* Interpretation: Given advanced age, "Brain injury" leading to death is 
+    highly likely secondary to a Fall.</span>
+  <span class="code-action">* Next Step: Check AE Listing for preceding events: Dizziness, Syncope, Hypotension</span>
+  <span class="code-info">* Quick Look: "Hypotension" (Grade 3) occurred in 2.4% of Drug XYZ patients.</span>
+
+<span class="code-section">4. Medical Review Summary</span>
+
+<span class="code-label">Conclusion:</span>
+  <span class="code-success">* No overall mortality imbalance detected.</span>
+  <span class="code-warning">* Safety profile shows distinct signals: Fistula and Myocarditis warrant 
+    specific risk management language in the CSR.</span>
+
+<span class="code-label">Suggested Actions:</span>
+  <span class="code-action">[HIGH] Narrative Writing: Prioritize drafting narratives for Fistula and Myocarditis events.</span>
+  <span class="code-action">[MEDIUM] Protocol Check: Verify if Fistula is a known risk in the IB.</span>
+  <span class="code-action">[LOW] Data Cleaning: Query the "Brain injury" case to confirm if a fall was involved.</span>
+</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing Section -->
+    <section class="closing-section">
+        <div class="container">
+            <div class="closing-card">
+                <p class="closing-quote">
+                    "While <strong>Dr. S</strong> ensures your data is <em>correct</em>, 
+                    <strong>Dr. M</strong> ensures your data is <em>understood</em>."
+                </p>
+                <p class="closing-subtitle">Together, they cover the full spectrum of clinical review.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🐬</span>
+                    <span>Dolphin Trinity AI™</span>
+                </div>
+                <p class="footer-tagline">Your Digital Clinical Board</p>
+                <p class="footer-copyright">© 2024 ClinReviewPlatform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/dr-m.js"></script>
+</body>
+</html>
+
+
